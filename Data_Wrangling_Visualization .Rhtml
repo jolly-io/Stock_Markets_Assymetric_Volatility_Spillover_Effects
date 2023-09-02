@@ -1,0 +1,57 @@
+<html>
+
+<head>
+<title>Title</title>
+</head>
+
+<body>
+
+#Assignment: Jolly Ogbolè
+#Data Visualization and Wrangling Summary Statistics
+# load required libraries
+library(xlsx)
+library(e1071)
+library(comprehenr)
+return <- read.xlsx("return_G6.xlsx", sheetIndex = 1)
+return.df <- return[, -c(1, 9)]
+
+
+for (i in names(return.df)){
+  print(paste("============================================"))
+  print(paste("Stat for continuous variable ",i))
+  print(paste("Minimum of ",i," :", min(return.df[,i], na.rm = TRUE)))
+  print(paste("First quartile of ",i," :", quantile(return.df[,i], 0.25, na.rm = TRUE)))
+  print(paste("Median of ",i," :", median(return.df[,i], na.rm = TRUE))) 
+  print(paste("Third quartile of ",i," :", quantile(return.df[,i], 0.75, na.rm = TRUE)))
+  print(paste("Maximum of ",i," :", max(return.df[,i], na.rm = TRUE)))
+  print(paste("Mean of ",i," :", mean(return.df[,i], na.rm = TRUE)))
+  print(paste("Standard deviation of ",i," :", sd(return.df[,i], na.rm = TRUE)))
+  print(paste("Skewness as summary statistics of ",i," :", skewness(return.df[,i], type = 2, na.rm = TRUE)))
+  hist(return.df[,i], breaks = "FD", xlab = paste("Number of ",i), 
+       main = paste("Histogram of ",i))
+}
+
+
+# Create an empty data frame to store the results
+results <- data.frame()
+
+for (i in names(return.df)){
+  # Store the summary statistics in a temporary data frame
+  temp <- data.frame(
+    Variable = i,
+    Minimum = min(return.df[,i], na.rm = TRUE),
+    Q1 = quantile(return.df[,i], 0.25, na.rm = TRUE),
+    Median = median(return.df[,i], na.rm = TRUE),
+    Q3 = quantile(return.df[,i], 0.75, na.rm = TRUE),
+    Maximum = max(return.df[,i], na.rm = TRUE),
+    Mean = mean(return.df[,i], na.rm = TRUE),
+    SD = sd(return.df[,i], na.rm = TRUE),
+    Skewness = skewness(return.df[,i], type = 2, na.rm = TRUE)
+  )
+  
+  # Append the temporary data frame to the results data frame
+  results <- rbind(results, temp)
+}
+
+#save data frame into a csv file
+write.csv(results, file = "summary_statistics.csv", row.names = FALSE)
